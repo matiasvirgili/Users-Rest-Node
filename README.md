@@ -10,7 +10,7 @@ This project consists of a simple "Rest API" to manage users, with the basic opt
 -Express
 -Mongoose
 
-#How to run this proyect?
+## How to run this proyect?
 
 1. Clone the project
 ```sh
