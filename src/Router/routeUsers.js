@@ -26,3 +26,12 @@ router.get(
 );
 
 router.get('/:id', [param('id').isMongoId(), fieldValidation], getUser);
+
+router.post('/', [...validations(), fieldValidation], postUser);
+
+router.put('/:id', [param('id').isMongoId(), ...validations(), fieldValidation], putUser)
+
+router.delete('/:id', [param('id').isMongoId(), fieldValidation], deleteUser);
+
+
+module.exports = router;
