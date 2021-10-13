@@ -11,7 +11,12 @@ const app = express();
 
 app.use(json());
 
+app.get('/', (req, res) => {
+  res.type('text/plain').send('Server OK');
+});
+
 app.use('/users', routerUsers);
+
 
 app.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);
