@@ -12,7 +12,7 @@ const app = express();
 app.use(json());
 
 app.get('/', (req, res) => {
-  res.type('text/plain').send('Server OK');
+  res.type('text/plain').send('Server OK, use "https://users-rest-node.herokuapp.com/users" to redirect users');
 });
 
 app.use('/users', routerUsers);
