@@ -7,9 +7,9 @@ const {
   postUser,
   putUser,
   deleteUser,
-} = require('../Controllers/usersController');
+} = require('../Controller/usersController');
 const validations = require('../Middlewares/validations');
-const fieldValidation = require('../Middlewares/fieldValidation');
+const fieldValidation = require('../Middlewares/fieldValidations');
 
 const router = Router();
 
