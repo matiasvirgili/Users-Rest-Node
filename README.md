@@ -71,7 +71,7 @@ To add or modify users you need the following fields:
     "dni" : "44444444"
 }
 ```
-### Delete product
+### Delete user
 
 `DELETE /users/:usersId`
 
