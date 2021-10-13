@@ -1,7 +1,7 @@
 const express = require('express');
 const { json } = require('body-parser');
 
-const routerUsers = require('./Routes/routeUsers');
+const routerUsers = require('./Router/routeUsers');
 
 require('dotenv').config();
 
