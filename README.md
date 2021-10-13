@@ -29,7 +29,7 @@ npm start
 You can test this app at
 [Heroku_Ivan](https://users-rest-node.herokuapp.com/)
  OR 
-[Heroku_Matias]()
+[Heroku_Matias](https://users-node-rest.herokuapp.com/users)
 
 ## API Specification
 ### Get users
