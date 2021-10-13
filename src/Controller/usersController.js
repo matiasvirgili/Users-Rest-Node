@@ -48,3 +48,77 @@ const getUser = async (req = request, res = response) => {
     res.status(500).json({ error: 'An error has occurred' });
   }
 };
+
+const postUser = async (req=request, res=response) =>{
+  try {
+    const user = new User(req.body)
+    const userExist = await User.findOne({
+      name: req.body.name,
+      lastName: req.body.lastName,
+      dni: req.body.dni
+    })
+if (userExist) {
+  res.status(400).json({
+    error: 'Error, existing user',
+  });
+} else{
+  await user.save();
+  res.status(201).json("User added successfully",user);
+}
+  } catch (error) {
+    res.status(500).json({ error: 'An error has occurred' });
+  }
+}
+
+const putUser = async (req=request, res = response) => {
+  try {
+    const userId = req.params.id;
+    let user = req.body;
+
+    const userExist = await User.findOne({
+      name: req.body.name,
+      lastName: req.body.lastName,
+      dni: req.body.dni,
+      _id: { $ne: userId }
+    })
+    if (userExist) {
+      return res.status(400).json({
+        error: 'Error, existing user',
+      });
+    } else{
+      user = await User.findByIdAndUpdate(userId, user, {
+        new: true,
+      });
+    }
+    if (user) {
+      res.json("User modified successfully",user);
+    } else{
+      res.status(404).json({ error: 'User doesn´t exist' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error has occurred' });
+  }
+}
+
+const deleteUser = async (req = request, res = response) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByIdAndDelete(userId);
+
+    if (user) {
+      res.json("User deleted successfully",user);
+    } else{
+      res.status(404).json({ error: 'User doesn´t exist' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error has occurred' });
+  }
+}
+
+module.exports = {
+  getUsers,
+  getUser,
+  postUser,
+  putUser,
+  deleteUser
+};
