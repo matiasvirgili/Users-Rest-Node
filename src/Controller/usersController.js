@@ -63,7 +63,7 @@ if (userExist) {
   });
 } else{
   await user.save();
-  res.status(201).json({"User added successfully": user});
+  res.status(201).json({mensaje: "User added successfully", datos:user});
 }
   } catch (error) {
     res.status(500).json({ error: 'An error has occurred' });
@@ -91,7 +91,7 @@ const putUser = async (req=request, res = response) => {
       });
     }
     if (user) {
-      res.json({"User modified successfully": user});
+      res.json({mensaje:"User modified successfully", datos: user});
     } else{
       res.status(404).json({ error: 'User doesn´t exist' });
     }
@@ -106,7 +106,7 @@ const deleteUser = async (req = request, res = response) => {
     const user = await User.findByIdAndDelete(userId);
 
     if (user) {
-      res.json({"User deleted successfully": user});
+      res.json({mensaje: "User deleted successfully", datos: user});
     } else{
       res.status(404).json({ error: 'User doesn´t exist' });
     }
