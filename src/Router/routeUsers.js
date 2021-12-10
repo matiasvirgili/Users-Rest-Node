@@ -6,47 +6,17 @@ const {
   postUser,
   putUser,
   deleteUser,
+  login,
 } = require('../Controller/usersController');
 const validations = require('../Middlewares/validations');
+const loginValidations = require('../Middlewares/loginvalidations');
 const fieldValidation = require('../Middlewares/fieldValidations');
-
+const isLoggedIn = require('../Middlewares/isLoggedIn');
 const router = Router();
-
-const passport = require('passport')
-
-router.get('/signup', (req, res, next) => {
-  res.render('index')
-});
-router.post('/signup', passport.authenticate('local-singup', {
-  successRedirect: '/',
-  failureRedirect: '/singup',
-  passReqToCallback: true
-}));
-router.get('/sigin', (req, res, next) =>{
-  res.render('singup')
-});
-router.post('/signin', passport.authenticate('local-singin',{
-  successRedirect: '/profile',
-  failureRedirect: '/singin',
-  passReqToCallback: true
-}) );
-
-router.get('/logout', (req, res, next) =>{
-  req.logOut();
-  res.redirect('/');
-})
 
 router.get('/profile', isAuthenticated, (req, res, next) => {
   res.render('profile');
-})
-
-function isAuthenticated(req, res, next) {
-  if(req.isAuthenticated()){
-    return next();
-  }
-  res.redirect('/')
-}
-
+});
 
 router.get(
   '/',
@@ -57,19 +27,33 @@ router.get(
     query('direction').isString().trim(),
     query('dni').isString().trim(),
   ],
+  isLoggedIn,
   getUsers
 );
 
-router.get('/:id', [param('id').isMongoId(), fieldValidation], getUser);
+router.get(
+  '/:id',
+  [param('id').isMongoId(), fieldValidation],
+  isLoggedIn,
+  getUser
+);
 
-router.post('/', [...validations(), fieldValidation], postUser);
+router.post('/', [...validations(), fieldValidation], isLoggedIn, postUser);
 
 router.put(
   '/:id',
   [param('id').isMongoId(), ...validations(), fieldValidation],
+  isLoggedIn,
   putUser
 );
 
-router.delete('/:id', [param('id').isMongoId(), fieldValidation], deleteUser);
+router.delete(
+  '/:id',
+  [param('id').isMongoId(), fieldValidation],
+  isLoggedIn,
+  deleteUser
+);
+
+router.post('/login', [...loginValidations(), fieldValidation], login);
 
 module.exports = router;

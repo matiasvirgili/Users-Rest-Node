@@ -20,4 +20,8 @@ export const isLoggedIn = async (req, res, next) => {
   }
 };
 
+<<<<<<< HEAD
 module.exports = isLoggedIn;
+=======
+module.exports = isLoggedIn;
+>>>>>>> login

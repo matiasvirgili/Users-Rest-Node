@@ -155,4 +155,8 @@ module.exports = {
   putUser,
   deleteUser,
   login,
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> login
