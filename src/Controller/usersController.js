@@ -1,6 +1,7 @@
 const { request, response } = require('express');
 const User = require('../Model/users');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 const login = async (req = request, res = response) => {
   const { email, password } = req.body;
@@ -23,7 +24,7 @@ const login = async (req = request, res = response) => {
     expiresIn: '2h',
   });
 
-  let user = { ...foundUser };
+  let user = { ...foundUser._doc };
   delete user.password;
 
   return res.status(200).json({ token: `bearer ${token}`, user });
@@ -31,7 +32,7 @@ const login = async (req = request, res = response) => {
 
 const getUsers = async (req = request, res = response) => {
   try {
-    const { name, lastName, telephone, direction, dni } = req.query;
+    const { name, lastName, telephone, direction, dni, email } = req.query;
     let termsUser = {};
 
     if (name) {

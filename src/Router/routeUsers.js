@@ -27,14 +27,12 @@ router.get(
     query('direction').isString().trim(),
     query('dni').isString().trim(),
   ],
-  isLoggedIn,
   getUsers
 );
 
 router.get(
   '/:id',
   [param('id').isMongoId(), fieldValidation],
-  isLoggedIn,
   getUser
 );
 
