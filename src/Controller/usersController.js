@@ -1,6 +1,6 @@
 const { request, response } = require('express');
 const User = require('../Model/users');
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 
 const login = async (req = request, res = response) => {
   const { email, password } = req.body;
@@ -26,7 +26,7 @@ const login = async (req = request, res = response) => {
   let user = { ...foundUser };
   delete user.password;
 
-  return { token: `bearer ${token}`, user };
+  return res.status(200).json({ token: `bearer ${token}`, user });
 };
 
 const getUsers = async (req = request, res = response) => {
