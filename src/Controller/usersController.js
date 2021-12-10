@@ -1,5 +1,33 @@
 const { request, response } = require('express');
 const User = require('../Model/users');
+const bcrypt = require('bcrypt-nodejs');
+
+const login = async (req = request, res = response) => {
+  const { email, password } = req.body;
+
+  const foundUser = await User.findOne({ email });
+  if (!foundUser) {
+    return res.status(401).json({ error: 'Email or password invalid.' });
+  }
+
+  const isEqual = await bcrypt.compare(password, foundUser.password);
+  if (!isEqual) {
+    return res.status(401).json({ error: 'Email or password invalid.' });
+  }
+
+  const payload = {
+    userId: foundUser._id,
+  };
+
+  let token = jwt.sign(payload, process.env.SECRET_KEY, {
+    expiresIn: '2h',
+  });
+
+  let user = { ...foundUser };
+  delete user.password;
+
+  return { token: `bearer ${token}`, user };
+};
 
 const getUsers = async (req = request, res = response) => {
   try {
@@ -26,6 +54,10 @@ const getUsers = async (req = request, res = response) => {
       const regex = new RegExp(dni, 'i');
       termsUser.dni = { $regex: regex };
     }
+    if (email) {
+      const regex = new RegExp(email, 'i');
+      termsUser.email = { $regex: regex };
+    }
     const users = await User.find(termsUser);
     res.send(users);
   } catch (error) {
@@ -49,28 +81,29 @@ const getUser = async (req = request, res = response) => {
   }
 };
 
-const postUser = async (req=request, res=response) =>{
+const postUser = async (req = request, res = response) => {
   try {
-    const user = new User(req.body)
+    const user = new User(req.body);
     const userExist = await User.findOne({
       name: req.body.name,
       lastName: req.body.lastName,
-      dni: req.body.dni
-    })
-if (userExist) {
-  res.status(400).json({
-    error: 'Error, existing user',
-  });
-} else{
-  await user.save();
-  res.status(201).json({mensaje: "User added successfully", datos:user});
-}
+      dni: req.body.dni,
+    });
+    if (userExist) {
+      res.status(400).json({
+        error: 'Error, existing user',
+      });
+    } else {
+      user.password = await bcrypt.hash(req.body.password, 12);
+      await user.save();
+      res.status(201).json({ 'User added successfully': user });
+    }
   } catch (error) {
     res.status(500).json({ error: 'An error has occurred' });
   }
-}
+};
 
-const putUser = async (req=request, res = response) => {
+const putUser = async (req = request, res = response) => {
   try {
     const userId = req.params.id;
     let user = req.body;
@@ -79,26 +112,26 @@ const putUser = async (req=request, res = response) => {
       name: req.body.name,
       lastName: req.body.lastName,
       dni: req.body.dni,
-      _id: { $ne: userId }
-    })
+      _id: { $ne: userId },
+    });
     if (userExist) {
       return res.status(400).json({
         error: 'Error, existing user',
       });
-    } else{
+    } else {
       user = await User.findByIdAndUpdate(userId, user, {
         new: true,
       });
     }
     if (user) {
-      res.json({mensaje:"User modified successfully", datos: user});
-    } else{
+      res.json({ 'User modified successfully': user });
+    } else {
       res.status(404).json({ error: 'User doesn´t exist' });
     }
   } catch (error) {
     res.status(500).json({ error: 'An error has occurred' });
   }
-}
+};
 
 const deleteUser = async (req = request, res = response) => {
   try {
@@ -106,19 +139,20 @@ const deleteUser = async (req = request, res = response) => {
     const user = await User.findByIdAndDelete(userId);
 
     if (user) {
-      res.json({mensaje: "User deleted successfully", datos: user});
-    } else{
+      res.json({ 'User deleted successfully': user });
+    } else {
       res.status(404).json({ error: 'User doesn´t exist' });
     }
   } catch (error) {
     res.status(500).json({ error: 'An error has occurred' });
   }
-}
+};
 
 module.exports = {
   getUsers,
   getUser,
   postUser,
   putUser,
-  deleteUser
+  deleteUser,
+  login,
 };
