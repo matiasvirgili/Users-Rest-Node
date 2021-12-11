@@ -14,10 +14,6 @@ const fieldValidation = require('../Middlewares/fieldValidations');
 const isLoggedIn = require('../Middlewares/isLoggedIn');
 const router = Router();
 
-router.get('/profile', isLoggedIn, (req, res, next) => {
-  res.render('profile');
-});
-
 router.get(
   '/',
   [
@@ -36,7 +32,9 @@ router.get(
   getUser
 );
 
-router.post('/', [...validations(), fieldValidation], isLoggedIn, postUser);
+router.post('/', [...validations(), fieldValidation], 
+isLoggedIn, 
+postUser);
 
 router.put(
   '/:id',
